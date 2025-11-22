@@ -1,0 +1,5 @@
+{
+  "name": "PaperFlow: Bilingual Knowledge Base",
+  "description": "A luminous, glassmorphic bilingual academic paper analyzer using Gemini 1.5 Flash.",
+  "requestFramePermissions": []
+}
