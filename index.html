@@ -31,7 +31,7 @@
       /* 3D FLIP SYSTEM */
       .flip-container {
         perspective: 2000px; /* Deep perspective for the slab feel */
-        cursor: pointer;
+        /* removed cursor: pointer to allow text selection */
       }
       
       .flip-inner {
@@ -141,11 +141,7 @@
             0 15px 20px -5px rgba(31, 38, 135, 0.1);
       }
 
-      /* Ensure content sits on top of glass layers */
-      .glass-panel > * {
-        position: relative;
-        z-index: 3;
-      }
+      /* REMOVED .glass-panel > * selector to fix absolute positioning issues */
 
       .glass-chip {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));

@@ -17,8 +17,10 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
                 .filter(line => line.length > 0)
                 .map(line => {
                     const isBullet = line.startsWith('•');
+                    // Parse markdown bold: **text** -> <strong ...>text</strong>
+                    const parsedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #0f172a; font-weight: 700;">$1</strong>');
                     // Added leading-loose and mb-3 for better spacing
-                    return `<p class="${isBullet ? 'pl-4' : ''} mb-3 leading-loose">${line}</p>`;
+                    return `<p class="${isBullet ? 'pl-4' : ''} mb-3 leading-loose">${parsedLine}</p>`;
                 })
                 .join('');
         };
@@ -36,7 +38,7 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
         `;
 
         return `
-        <div class="flip-container mb-12 max-w-5xl mx-auto" onclick="toggleFlip(this)">
+        <div id="${uniqueId}" class="flip-container mb-12 max-w-5xl mx-auto">
             <div class="flip-inner">
                 <!-- FRONT FACE -->
                 <div class="flip-face flip-front glass-panel p-8">
@@ -71,8 +73,10 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
                                     <div style="font-weight: 500; color: #1e293b;">${formatText(content.key_results)}</div>
                                 </div>
                                 
-                                <div style="text-align:right; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 20px;">
-                                    ${language === 'en' ? 'Click card to flip' : '点击卡片翻转'} &rarr;
+                                <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                                    <button onclick="toggleFlip('${uniqueId}')" class="flip-btn">
+                                        ${language === 'en' ? 'Flip for details' : '点击翻转查看详情'} &rarr;
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -116,9 +120,9 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
                             <div style="font-style: italic; color: #64748b;">${formatText(content.benchmarks_comparisons)}</div>
                         </div>
                         
-                        <div style="position: absolute; bottom: 30px; right: 30px; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">
+                        <button onclick="toggleFlip('${uniqueId}')" class="flip-btn" style="position: absolute; bottom: 30px; right: 30px;">
                             &larr; ${language === 'en' ? 'Flip back' : '返回'}
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -145,7 +149,6 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
         /* 3D Flip System */
         .flip-container {
             perspective: 2000px;
-            cursor: pointer;
             position: relative;
         }
         .flip-inner {
@@ -204,10 +207,6 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
             z-index: 2;
         }
 
-        .glass-panel:hover {
-             /* No lift on the panel itself in flip mode, keeps it stable */
-        }
-
         .etched-glass {
             background: rgba(255, 255, 255, 0.3);
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
@@ -232,6 +231,26 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
             text-decoration: none;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             cursor: default;
+        }
+
+        .flip-btn {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .flip-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         h2 { font-size: 2.25rem; line-height: 2.5rem; margin: 0; letter-spacing: -0.02em; }
@@ -318,8 +337,9 @@ export const generateHtmlReport = (dataList: AnalyzedPaper[], language: Language
     </div>
 
     <script>
-        function toggleFlip(element) {
-            element.classList.toggle('flipped');
+        function toggleFlip(elementId) {
+            const el = document.getElementById(elementId);
+            if(el) el.classList.toggle('flipped');
         }
         function expandImage(event, imgId) {
             event.stopPropagation();

@@ -65,6 +65,7 @@ Specific Formatting Rules:
 2.  **Ablation & Failure Analysis**: Do NOT use a wall of text. Use bullet points (•) to list specific failures, instability issues, or negative results. **Each bullet point must be on a new line.**
 3.  **Bilingual Output**: You must provide ALL content fields in both English (content_en) and professional Chinese (content_zh).
 4.  **GitHub**: If a GitHub URL is mentioned, extract it.
+5.  **Emphasis**: Use standard Markdown bold syntax (**text**) for key terms or metrics within the summaries.
 
 Constraint: Ensure the "downstream_tasks" and "ablation_failure_analysis" fields use the bullet point format strictly with line breaks.
 `;
@@ -123,8 +124,9 @@ export const analyzePaper = async (file: File, apiKey: string): Promise<Analyzed
 
     try {
         // 3. Call Gemini
+        // Using gemini-3-pro-preview for complex STEM tasks as per guidelines
         const response = await genAI.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-pro-preview',
             config: {
                 systemInstruction: SYSTEM_INSTRUCTION,
                 responseMimeType: 'application/json',

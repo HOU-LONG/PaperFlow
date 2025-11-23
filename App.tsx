@@ -18,6 +18,12 @@ const App: React.FC = () => {
     }
   };
 
+  // Delete Handler
+  const handleDelete = (id: string) => {
+    // Removed window.confirm to prevent blocking/ignoring issues
+    setResults(prev => prev.filter(paper => paper.id !== id));
+  };
+
   // Batch Processing Logic
   const startProcessing = async () => {
     // STRICT: API Key must come from process.env.API_KEY
@@ -158,7 +164,12 @@ const App: React.FC = () => {
         {/* Results Feed */}
         <div className="space-y-8">
            {results.map((paper) => (
-             <GlassCard key={paper.id} data={paper} language={language} />
+             <GlassCard 
+                key={paper.id} 
+                data={paper} 
+                language={language} 
+                onDelete={() => handleDelete(paper.id)}
+             />
            ))}
            
            {results.length === 0 && status === ProcessingStatus.COMPLETE && (
